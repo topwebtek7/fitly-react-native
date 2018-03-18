@@ -1,0 +1,89 @@
+{
+  "event": {
+    "index": "firebase",
+    "type": "event",
+    "body": {
+      "properties": {
+        "startDate": {
+          "type": "long"
+        },
+        "title": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "category": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "memberCount": {
+          "type": "long"
+        },
+        "isPublic": {
+          "type": "boolean"
+        },
+        "location": {
+          "properties": {
+            "coordinate": {
+              "type": "geo_point"
+            }
+          }
+        }
+      }
+    }
+  },
+  "user": {
+    "index": "firebase",
+    "type": "user",
+    "body": {
+      "properties": {
+        "first_name" : {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "last_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "full_name": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "userCurrentLocation": {
+          "properties": {
+            "coordinate": {
+              "type": "geo_point"
+            }
+          }
+        }
+      }
+    }
+  },
+  "waitingRoom": {
+    "index": "waitingroom",
+    "type": "waitingroom",
+    "body": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "currentLocation": {
+          "type": "geo_point"
+        },
+        "activityLevel": {
+          "type": "integer"
+        },
+        "height": {
+          "type": "integer"
+        },
+        "weight": {
+          "type": "integer"
+        },
+        "workoutType": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,607 @@
+//users, photos, messages, posts, events, groups, sessions, updates
+//$ prefix denotes instance of a object type. i.e. $uID is the id of a particular user, $postID is the id of a particular post
+{
+  "users": {
+    "$uID": {
+      "private": {
+        "height": "height",
+        "weight": "weight",
+        "activeLevel": 10,
+        "email": "marcus@fitly.com",
+        "gender": "male",
+        "birthday": "date",
+        "friends": "Facebook friends"
+      },
+      "public": {
+        "first_name": "Marcus",
+        "last_name": "Davenport",
+        "picture": "fitly.com/fitly.png",
+        "followerCount": 100,
+        "followingCount": 20,
+        "sessionCount": 56,
+        "userLocation": "Geolocation Object",
+        "userCurrentLocation": "Geolocation Object",
+        "provider": "Facebook",
+        "profileComplete": true,
+        "summary": "Short summary of user",
+        "dateJoined": "date",
+        "lastActive": "date"
+      }
+    }
+  },
+  "followers": {
+    "$uID1": {
+      "$uID2": true
+    }
+  },
+  "followings": {
+    "$uID1": {
+      "$uID2": true
+    }
+  },
+  "userPhotos": {
+    "$uID": {
+      "$photoID": {
+        "link": "fitly.com/fitly.png",
+        "timestamp": "date"
+      }
+    }
+  },
+  "userCollections": {
+    "$uID": {
+      "$collectionID": {
+        "contentType": "type of content",
+        "contentID": "$postID, $messageID, $photoID, $eventID",
+        "contentlink": "database entry path",
+        "description": "description",
+        "timestamp": "date"
+      }
+    }
+  },
+  "userUpdatesAll": {
+    "$uID": {
+      "$updateID": {
+        "type": "anything, new post, new workout, new photo, new event, new save, new likes, new comment, new follow",
+        "contentID": "$postID, $messageID, $photoID, $eventID",
+        "contentlink": "database entry path",
+        "description": "description",
+        "ownerName": "name",
+        "ownerPicture": "link",
+        "owner": "$uID",
+        "photos": {
+          "link": "link",
+          "timestamp": "date"
+        },
+        "timestamp": "date"
+      }
+    }
+  },
+  "userUpdatesMajor": {
+    "$uID": {
+      "$updateID": {
+        "type": "new post, new workout, new photo, new event, new save",
+        "contentID": "$postID, $messageID, $photoID, $eventID",
+        "contentlink": "database entry path",
+        "description": "description",
+        "ownerName": "name",
+        "ownerPicture": "link",
+        "owner": "$uID",
+        "photos": {
+          "link": "link",
+          "timestamp": "date"
+        },
+        "timestamp": "date"
+      }
+    }
+  },
+  "feeds": {
+    "$uID": {
+      "$updateID": {
+        "type": "new post, new workout, new photo, create new event, join new event, new save, join new group",
+        "contentID": "$postID, $messageID, $photoID, $eventID",
+        "contentlink": "database entry path",
+        "description": "description",
+        "ownerName": "name",
+        "ownerPicture": "link",
+        "owner": "$uID",
+        "photos": {
+          "link": "link",
+          "timestamp": "date"
+        },
+        "timestamp": "date"
+      }
+    }
+  },
+  "followerNotifications": {
+    "$uID": {
+      "$updateID": {
+        "type": "new likes, new comment, new save, new follow",
+        "contentID": "$postID, $messageID, $photoID, $eventID $uID",
+        "contentlink": "database entry path",
+        "description": "description",
+        "ownerName": "name",
+        "ownerPicture": "link",
+        "owner": "$uID",
+        "photos": {
+          "link": "link",
+          "timestamp": "date"
+        },
+        "timestamp": "date"
+      }
+    }
+  },
+  "otherNotifications": {
+    "$uID": {
+      "$updateID": {
+        "type": "comment to your post or message",
+        "contentID": "$postID, $messageID, $photoID, $eventID $uID",
+        "contentlink": "database entry path",
+        "ownerName": "name",
+        "ownerPicture": "link",
+        "owner": "$uID",
+        "timestamp": "date"
+      }
+    }
+  },
+  "userLikes": {
+    "$uID": {
+      "$likeID": "data looks like an update"
+    }
+  },
+  "userPosts": {
+    "$uID": {
+      "$postID": true
+    }
+  },
+  "userEvents": {
+    "$uID": {
+      "$eventID": true
+    }
+  },
+  "userGroups": {
+    "$uID": {
+      "$groupID": true
+    }
+  },
+  "userChats": {
+    "$uID": {
+      "$uID2": {
+        "chatID": "chatID",
+        "lastMsg": "last message in conversation",
+        "lastMsgDate": "date",
+        "otherMember": "$uID"
+      }
+    }
+  },
+  "userShared": {
+    "$uID": {
+      "contentID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "chats": {
+    "$chatID": {
+      "members": {
+        "uID": true
+      },
+      "directMsgs": {
+        "$directMsgID" : {
+          "author": "uid",
+          "content": "content or image url",
+          "type": "image or text or invite",
+          "status": "status field is avaialble if the message is an invite, the available status are: pending, accepted, reject",
+          "contendID": "i.e. inviteID",
+          "timestamp": "date"
+        }
+      }
+    }
+  },
+  "invites": {
+    "$inviteID": {
+      "inviter": "uID",
+      "receiver": "uID",
+      "status": "pending, accepted, reject"
+    }
+  },
+  "userInvites": {
+    "$userID": {
+      "$inviteID": true,
+    }
+  },
+  "posts": {
+    "$postID": {
+      "author": "uID",
+      "authorName": "name",
+      "authorPicture": "link",
+      "title": "How to get six packs",
+      "content": "text content goes here",
+      "category": "workOut, meal, event, others",
+      "replyCount": 10,
+      "lastMsg": "the last text message",
+      "lastRepliedAt": "the last text message",
+      "tags": {
+        "getRip": true,
+        "proTip": true
+      },
+      "likeCount": 200,
+      "shareCount": 100,
+      "saveCount": 100,
+      "createdAt": "date",
+      "editedAt": "date",
+      "updatedAt": "date",
+      "photos": {
+        "$photoID": true
+      }
+    }
+  },
+  "postsReplies": {
+    "$postID": {
+      "$messageID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "postMembers": {
+    "$postID": {
+      "$uID": true
+    }
+  },
+  "postLikes": {
+    "$postID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "postShares": {
+    "$postID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "postSaves": {
+    "$postID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "messages": {
+    "$messageID": {
+      "author": "uID",
+      "photos": {
+        "$photoID": true
+      },
+      "content": "message content",
+      "createdAt": "date",
+      "updatedAt": "date",
+      "likeCount": 100,
+      "shareCount": 100,
+      "saveCount": 100,
+      "replyCount": 10,
+      "contentlink": "the path to the record, the path is created when the message is created",
+      "tags": {
+        "getRip": true,
+        "proTip": true
+      },
+      "replies": {
+        "$messageID": true
+      }
+    }
+  },
+  "messageLikes": {
+    "$messageID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "messageShares": {
+    "$messageID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "messageSaves": {
+    "$messageID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "photos": {
+    "$photoID": {
+      "link": "fitly.com/fitly.png",
+      "likeCount": 200,
+      "timestamp": "date",
+      "likeMembers": {"uid": true},
+      "sharedMembers": {"uid": true},
+      "savedMembers": {"uid": true},
+      "description": "photo descriptions",
+      "author": "uID",
+      "createdAt": "date",
+      "updatedAt": "date",
+      "likeCount": 100,
+      "shareCount": 100,
+      "saveCount": 100,
+      "replyCount": 10,
+      "contentlink": "the path to the record, the path is created when the message is created",
+      "tags": {
+        "mealplan": true,
+        "protein": true
+      },
+      "contentlink": "the path to the record, the path is created when the message is created",
+      "replies": {
+        "$messageID": true,
+      }
+    }
+  },
+  "photoLikes": {
+    "$photoID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "photoShares": {
+    "$photoID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "phototSaves": {
+    "$photoID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "events": {
+    "$eventID": {
+      "title": "Golden Gate Marathon",
+      "organizers": {
+        "$uID": true
+      },
+      "category": "category",
+      "location": {
+        "address": "address",
+        "coordinate": {
+          "lat": "37.31090564416996",
+          "lon": "-122.0345336269557",
+        },
+        "placeName": "placeName",
+      },
+      "details": "event details",
+      "cost": "cost to join",
+      "memberCount": 300,
+      "startDate": "date",
+      "endDate": "date",
+      "likeCount": 1000,
+      "createdAt": "date",
+      "updatedAt": "date",
+      "location": "Gelocation Object",
+      "isPublic": true,
+      "groupID": "$groupID or null",
+      "backgroundImage": "link",
+      "photos": {
+        "$photoID": true
+      },
+    }
+  },
+  "eventMembers": {
+    "main": {
+      "$eventID": {
+        "$uID": {
+          "going": true,
+          "notGoing": false,
+          "maybe": false
+        }
+      }
+    },
+    "going": {
+      "$eventID": {
+        "$uID": true
+      }
+    },
+    "notGoing": {
+      "$eventID": {
+        "$uID": true
+      }
+    },
+    "maybe": {
+      "$eventID": {
+        "$uID": true
+      }
+    },
+  },
+  "eventPhotos": {
+    "$eventID": {
+      "$photoID": true
+    }
+  },
+  "eventLikes": {
+    "$eventID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+ "eventShares": {
+    "$eventID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+ "eventSaves": {
+    "$eventID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "eventMessages": {
+    "$eventID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  // "userEventInvites": {
+  //   "$uID": {
+  //     "$eventID": {
+  //       "timestamp": "date"
+  //     }
+  //   }
+  // },
+  "groups": {
+    "$groupID": {
+      "organizers": {
+        "$uID": true
+      },
+      "description": "group / team description",
+      "name": "Fitly Basketball Team",
+      "memberCount": 100,
+      "activityCount": 20,
+      "likeCount": 20,
+      "posts": {
+        "$postID": true
+      }
+    }
+  },
+  "groupMembers": {
+    "$groupID": {
+      "$uID": true
+    }
+  },
+  "groupEvents": {
+    "$groupID": {
+      "$eventID": true
+    }
+  },
+  "groupPhotos": {
+    "$groupID": {
+      "$photoID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "groupLikes": {
+    "$groupID": {
+      "$uID": {
+        "timestamp": "date"
+      }
+    }
+  },
+  "waitingRoom": {
+    "$uID": {
+      "profile": {
+        "id": "uID",
+        "picture": "link",
+        "last_name": "name",
+        "first_name": "name",
+        "activityLevel": 5,
+        "height": 5,
+        "weight": 130,
+        "workoutType": "cardio",
+        "currentLocation": {
+          "lat": "37.31090564416996",
+          "lon": "-122.0345336269557",
+        },
+      },
+      "query": "elastic search query, can filter geolocation range, activity level, excercise type",
+      "timestamp": "startDate",
+      "$zipcode": {
+        "$uID": "Geolocation Object, note users will be removed from the waiting room once they get matched"
+      },
+    }
+  },
+  "matchedUsers": {
+    "$uID1": {
+      "partnerProfile": {
+        "picture": "link",
+        "last_name": "name",
+        "first_name": "name",
+        "id": "uID2",
+        "sessionKey": "sessionKey"
+      },
+      "matchStatus": false,
+      "timestamp": "date"
+    },
+    "$uID2": {
+      "partnerProfile": {
+        "picture": "link",
+        "last_name": "name",
+        "first_name": "name",
+        "id": "uID1",
+      },
+      "matchStatus": false,
+      "timestamp": "date"
+    },
+  },
+  "workoutSessions": {
+    "$sessionID": {
+      "members": {
+        "$uID": true,
+        "$uID2": true
+      },
+      "confirmation": {
+        "$uID": true,
+        "$uID2": false
+      },
+      "startDate": "date",
+      "location": {
+        "address": "address",
+        "coordinate": {
+          "lat": "37.31090564416996",
+          "lon": "-122.0345336269557",
+        },
+        "placeName": "placeName",
+      }
+    }
+  },
+  "sessionChat": {
+    "$sessionID": {
+      "members": {
+        "$uID": true,
+      },
+      "directMsgs": {
+        "$directMsgID" : {
+          "author": "uid",
+          "content": "text content",
+          "timestamp": "date"
+        }
+      }
+    }
+  },
+  "userWorkOutSessions": {
+    "$uID": {
+      "$sessionID": {
+        "partner": "uid",
+        "timestamp": "date"
+      }
+    }
+  },
+  "userWorkOutPartners": {
+    "$uID": {
+      "$uID2": {
+        "sessions": {
+          "$sessionID": {
+            "timestamp": "date"
+          }
+        },
+        "lastConnected": "date"
+      }
+    }
+  },
+  "userLogin": {
+    "$uID": {
+      "timeIn": "date",
+      "timeOut": "date"
+    }
+  }
+}

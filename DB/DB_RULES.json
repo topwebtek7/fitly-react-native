@@ -1,0 +1,736 @@
+{
+  "rules": {
+    "admin": {
+
+    },
+    "betaCode": {
+        ".read": "auth.uid == null",
+    },
+    "users": {
+      //only admin can retrive list of users
+      // ".read": "root.child('admin').hasChild(auth.uid)",
+      "$userid": {
+        ".read": "auth.uid == $userid",
+        ".write": "auth.uid == $userid",
+        ".indexOn": ["public/followerCount", "public/sessionCount"],
+        //add validation rule to make sure no other fields are created
+        "$other": { ".validate": false },
+        "public": {
+          ".read": "auth !== null",
+        	".write": "auth.uid == $userid",
+          "followerCount": {
+            ".read": "auth !== null",
+            ".write": "auth !== null"
+          },
+          "followingCount": {
+            ".read": "auth !== null",
+            ".write": "auth !== null"
+          }
+        },
+        "private": {
+          ".read": "auth.uid == $userid || root.child('admin').hasChild(auth.uid)",
+        	".write": "auth.uid == $userid",
+        },
+      },
+    },
+    "blocks":{
+      "$userid": {
+        ".read": "auth.uid == $userid",
+        ".write": "auth !== null",
+      }
+    },
+    "blocking":{
+      "$userid": {
+        ".read": "auth.uid == $userid",
+        ".write": "auth.uid == $userid",
+      }
+    },
+    "interests": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+      }
+    },
+    "followers": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+        "$userid2": {
+          ".write": "auth.uid == $userid2",
+        }
+      }
+    },
+    "followings": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+        "$userid2": {
+          ".write": "auth.uid == $userid || auth.uid == $userid2",
+        }
+      }
+    },
+    "userPhotos": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$photoID": {
+        	".write": "auth.uid == $userid"
+        }
+      }
+    },
+    "userMessages": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$messageID": {
+        	".write": "auth.uid == $userid"
+        }
+      }
+    },
+  	"userLikes": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$likeID": {
+        	".write": "auth.uid == $userid"
+        }
+      }
+    },
+    "userUpdatesMajor": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+        ".indexOn": ["timestamp"]
+      }
+    },
+   "userUpdatesAll": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+        ".indexOn": ["timestamp"]
+      }
+    },
+    // this might not be neccessary
+    // "userEventInvites": {
+    //   "$userid": {
+    //     ".read": "auth !== null",
+    //     ".write": "auth.uid == $userid",
+    //     ".indexOn": ["timestamp"],
+    //     "$eventid": {
+    //       ".read": "auth !== null",
+    //       ".write": "(newData.child('ownerID').val() == auth.uid || data.child('ownerID').val() == auth.uid)",
+    //     }
+    //   }
+    // },
+    "feeds": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$updateID": {
+          //allow create/update/delete if user is the person being followed, and the data/newData's 'owner' is the user
+          ".write": "(newData.child('ownerID').val() == auth.uid || data.child('ownerID').val() == auth.uid || auth.uid == $userid)",
+        }
+      }
+    },
+    "followerNotifications": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$updateID": {
+          //allow create/update/delete if user is the follower, and the data/newData's 'owner' is the user
+          ".write": "root.child('followers').child($userid).hasChild(auth.uid) && (newData.child('ownerID').val() == auth.uid || data.child('ownerID').val() == auth.uid)",
+        }
+      }
+    },
+    "otherNotifications": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$updateID": {
+          //allow create/update/delete if user is the follower, and the data/newData's 'owner' is the user
+          ".write": "newData.child('ownerID').val() == auth.uid || data.child('ownerID').val() == auth.uid",
+        }
+      }
+    },
+    "userPosts": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+      }
+    },
+    "userEvents": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+      }
+    },
+    "userGroups": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+      }
+    },
+    "userChats": {
+      "$userid": {
+        ".read": "auth.uid == $userid",
+        ".indexOn": ["lastMsgDate"],
+        "$userid2": {
+          ".read": "auth.uid == $userid",
+        	".write": "auth.uid == $userid || auth.uid == $userid2",
+        }
+      }
+    },
+    "userCollections": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+      }
+    },
+  	"userShared": {
+      "$userid": {
+        ".read": "auth !== null",
+        ".write": "auth.uid == $userid",
+      }
+    },
+    "chats": {
+      "$chatID": {
+        ".read": "data.child('members').hasChild(auth.uid)",
+      	".write": "!data.exists() && newData.child('members').hasChild(auth.uid) || data.child('members').hasChild(auth.uid)",
+        ".indexOn": ["timestamp"],
+        "directMsgs": {
+          "$directMsgID" : {
+            ".write": "!data.exists() && newData.parent().parent().child('members').hasChild(auth.uid)",
+          }
+        }
+      }
+    },
+    "invites": {
+      ".indexOn": ["timestamp"],
+      "$inviteID": {
+        //allow read only if user is the inviter or receiver of the invite
+				".read": "data.child('inviter').val() == auth.uid || data.child('receiver').val() == auth.uid",
+        //allow write only if data doesn't exist or user is the inviter or receiver
+        ".write": "!data.exists() || (data.child('inviter').val() == auth.uid || data.child('receiver').val() == auth.uid)",
+      }
+    },
+    "userInvites": {
+      "$userid": {
+        ".read": "auth.uid == $userid",
+        ".indexOn": ["timestamp"],
+				"$inviteID": {
+          //allow write if the inviter of the invite is the current user and the reciver of the invite is the target user
+          ".write": "root.child('invites').child($inviteID).child('inviter').val() == auth.uid && root.child('invites').child($inviteID).child('receiver').val() == $userid",
+        }
+      }
+    },
+    "posts": {
+      ".indexOn": ["createdAt", "likeCount", "msgCount", "lastMsgDate"],
+      ".read": "auth !== null",
+      "$postID": {
+        ".read": "auth !== null",
+        //allow create/update/delete for the author
+        ".write": "newData.child('author').val() == auth.uid || data.child('author').val() == auth.uid",
+        "msgCount": {
+          ".write": "auth !== null",
+        },
+        "replyCount": {
+          ".write": "auth !== null",
+        },
+        "lastRepliedAt": {
+          ".write": "auth !== null",
+        },
+        "lastMsg": {
+          ".write": "auth !== null",
+        },
+        "likeCount": {
+        	".write": "auth !== null",
+        },
+        "shareCount": {
+        	".write": "auth !== null",
+        },
+        "saveCount": {
+        	".write": "auth !== null",
+        },
+        "updatedAt": {
+        	".write": "auth !== null",
+        },
+        "photos": {
+          ".indexOn": ["timestamp", "updatedAt", "lastMsgDate"],
+          "$photoID": {
+            //allow write if the photo is in photos column and the author is the user
+            ".write": "root.child('photos').hasChild($photoID) && root.child('photos').child($photoID).child('author').val() == auth.uid",
+          }
+        }
+      }
+    },
+    "postComments": {
+      "$postID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$messagesID": {
+          ".write": "auth !== null"
+        }
+      }
+    },
+    "postLikes": {
+      "$postID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "postShares": {
+      "$postID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "postSaves": {
+      "$postID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "messages": {
+      ".indexOn": ["createdAt", "likeCount"],
+      "$messageID": {
+				".read": "auth !== null",
+        //allow create/update/delete for the author
+        ".write": "newData.child('author').val() === auth.uid || data.child('author').val() === auth.uid",
+        "replies": {
+          ".indexOn": ["timestamp"],
+          "$messageID": {
+            //allow write only if user is authenticated and the message is in the messages field
+          	".write": "auth !== null && root.child('messages').hasChild($messageID)",
+          }
+        },
+        "replyCount": {
+        	".write": "auth !== null",
+        },
+        "likeCount": {
+        	".write": "auth !== null",
+        },
+        "shareCount": {
+        	".write": "auth !== null",
+        },
+        "saveCount": {
+        	".write": "auth !== null",
+        },
+        "lastRepliedAt": {
+          ".write": "auth !== null",
+        },
+        "lastMsg": {
+          ".write": "auth !== null",
+        },
+        "photos": {
+          ".indexOn": ["timestamp"],
+          "$photoID": {
+            //allow write if the photo is in photos column and the author is the user
+            ".write": "root.child('photos').hasChild($photoID) && root.child('photos').child($photoID).child('author').val() == auth.uid",
+          }
+        },
+      }
+    },
+    "messageLikes": {
+      ".indexOn": ["timestamp"],
+      ".read": "auth !== null",
+      "$messageID": {
+        "$userid": {
+          ".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "messageShares": {
+      "$messageID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "messageSaves": {
+      "$messageID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+		"photos": {
+      ".indexOn": ["createdAt", "likeCount"],
+      "$photoID": {
+				".read": "auth !== null",
+        //allow create/update/delete for the author
+        ".write": "newData.child('author').val() === auth.uid || data.child('author').val() === auth.uid",
+        "replyCount": {
+        	".write": "auth !== null",
+        },
+        "likeCount": {
+        	".write": "auth !== null",
+        },
+        "shareCount": {
+        	".write": "auth !== null",
+        },
+        "saveCount": {
+        	".write": "auth !== null",
+        },
+      	"lastRepliedAt": {
+          ".write": "auth !== null",
+        },
+        "lastMsg": {
+          ".write": "auth !== null",
+        },
+        "replies": {
+          ".indexOn": ["timestamp"],
+          "$messageID": {
+            //allow write only if user is authenticated and the message is in the messages field
+          	".write": "auth !== null && root.child('messages').hasChild($messageID)",
+          }
+        }
+      }
+    },
+    "photoLikes": {
+      ".read": "auth !== null",
+      ".indexOn": ["timestamp"],
+      "$photoID": {
+        "$userid": {
+          ".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "photoShares": {
+      "$postID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "photoSaves": {
+      "$postID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$userid": {
+        	".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "events": {
+      "$eventID": {
+        ".read": "auth !== null",
+        ".indexOn": ["createdAt", "memberCount", "likeCount"],
+        //allow create if event has not already exist, allow update/delete if the user is an organizer of the event
+        ".write": "!data.exists() || root.child('events').child($eventID).child('organizers').hasChild(auth.uid)",
+        "memberCount": {
+        	".write": "auth !== null",
+        },
+        "likeCount": {
+        	".write": "auth !== null",
+        },
+        "lastRepliedAt": {
+          ".write": "auth !== null",
+        },
+        "lastMsg": {
+          ".write": "auth !== null",
+        },
+        "shareCount": {
+        	".write": "auth !== null",
+        },
+        "saveCount": {
+        	".write": "auth !== null",
+        },
+        "updatedAt": {
+        	".write": "auth !== null",
+        },
+      }
+    },
+    "eventMembers": {
+      "main": {
+        "$eventID": {
+          ".read": "auth !== null",
+          "$userid": {
+            // "going": true,
+            // "notGoing": false,
+            // "maybe": false
+           ".write": "auth.uid == $userid"
+          }
+        }
+      },
+      "going": {
+        "$eventID": {
+          ".read": "auth !== null",
+          "$userid": {
+            ".write": "auth.uid == $userid"
+          }
+        }
+      },
+      "notGoing": {
+        "$eventID": {
+          ".read": "auth !== null",
+          "$userid": {
+            ".write": "auth.uid == $userid"
+          }
+        }
+      },
+      "maybe": {
+        "$eventID": {
+          ".read": "auth !== null",
+          "$userid": {
+            ".write": "auth.uid == $userid"
+          }
+        }
+      }
+    },
+    "eventPhotos": {
+      ".indexOn": ["timestamp"],
+      "$eventID": {
+        ".read": "auth !== null",
+        ".write": "root.child('events').child($eventID).child('organizers').hasChild(auth.uid)",
+      }
+    },
+    "eventLikes": {
+      ".indexOn": ["timestamp"],
+      ".read": "auth !== null",
+      "$eventID": {
+        "$userid": {
+          ".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "eventShares": {
+      ".indexOn": ["timestamp"],
+      ".read": "auth !== null",
+      "$eventID": {
+        "$userid": {
+          ".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "eventSaves": {
+      ".indexOn": ["timestamp"],
+      ".read": "auth !== null",
+      "$eventID": {
+        "$userid": {
+          ".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "eventComments": {
+      "$eventID": {
+        ".read": "auth !== null",
+        ".indexOn": ["timestamp"],
+        "$messagesID": {
+          ".write": "auth !== null"
+        }
+      }
+    },
+    "groups": {
+      ".indexOn": ["createdAt", "memberCount", "likeCount"],
+      "$groupID": {
+        ".read": "auth !== null",
+        //allow create if group has not already exist, allow update/delete if the user is an organizer of the group
+        ".write": "!data.exists() || root.child('groups').child($groupID).child('organizers').hasChild(auth.uid)",
+        "memberCount": {
+        	".write": "root.child('groupMembers').child($groupID).hasChild(auth.uid)"
+        },
+        "activityCount": {
+          //will be updated by the server when the activity has finished at the specified end date
+        	".write": "root.child('admin').hasChild(auth.uid)"
+        },
+        "likeCount": {
+        	".write": "auth !== null",
+        }
+      }
+    },
+    "groupMembers": {
+      "$groupID": {
+        ".read": "auth !== null",
+        "$userid": {
+        	".write": "auth.uid == $userid"
+        }
+      }
+    },
+    "groupEvents": {
+      "$groupID": {
+        ".read": "auth !== null",
+        "$eventID": {
+          //allow write if user is the event or the group's organizer
+        	".write": "root.child('events').child($eventID).child('organizers').hasChild(auth.uid) || root.child('groups').child($groupID).child('organizers').hasChild(auth.uid)",
+        }
+      }
+    },
+    "groupPhotos": {
+      ".indexOn": ["timestamp"],
+      "$groupID": {
+        ".read": "auth !== null",
+        //allow write if user is the organizer of the group
+        ".write": "root.child('groups').child($groupID).child('organizers').hasChild(auth.uid)",
+      }
+    },
+    "groupLikes": {
+      ".indexOn": ["timestamp"],
+      ".read": "auth !== null",
+      "$groupID": {
+        "$userid": {
+          ".write": "auth.uid == $userid",
+        }
+      }
+    },
+    "waitingRoom": {
+      ".indexOn": ["timestamp"],
+      "$userid": {
+        ".read": "auth.uid == $userid",
+      	".write": "auth.uid == $userid",
+      }
+    },
+    "matchedUsers": {
+      ".indexOn": ["timestamp"],
+      "$userid": {
+				".read": "auth.uid == $userid",
+        ".write": "auth.uid == $userid",
+        "matchStatus": {
+          ".read": "data.parent().child('partnerProfile').child('id').val() == auth.uid",
+          ".write": "newData.parent().child('partnerProfile').child('id').val() == auth.uid"
+        }
+      }
+    },
+    "workoutSessions": {
+      ".indexOn": ["startDate"],
+      "$sessionID": {
+        //allow read and write if user is the member of the session
+        ".read": "data.child('members').hasChild(auth.uid)",
+        ".write": "data.child('members').hasChild(auth.uid) || newData.child('members').hasChild(auth.uid)",
+      }
+    },
+    "sessionChat": {
+      "$sessionID": {
+        //allow read and write if user is the member of the session
+        ".read": "data.child('members').hasChild(auth.uid)",
+        ".write": "data.child('members').hasChild(auth.uid) || newData.child('members').hasChild(auth.uid)",
+        "directMsgs": {
+          ".indexOn": ["createdAt"],
+          "$directMsgID": {
+            ".write": "newData.parent().parent().child('members').hasChild(auth.uid) && newData.child('author').val() === auth.uid"
+          }
+        }
+      }
+    },
+    "userWorkOutSessions": {
+      "$userid": {
+        ".read": "auth.uid == $userid",
+        ".write": "auth.uid == $userid",
+        ".indexOn": ["timestamp"],
+        "$sessionID": {
+          ".read": "false",
+					".write": "false",
+        }
+      }
+    },
+    "userWorkOutPartners": {
+      "$userid": {
+				".read": "auth.uid == $userid",
+        ".write": "auth.uid == $userid",
+        ".indexOn": ["lastConnected"],
+        "$userid2": {
+          "sessions": {
+            ".indexOn": ["timestamp"],
+            "$sessionID": {
+              ".read": "false",
+							".write": "false",
+            }
+          }
+        }
+      }
+    },
+    "tags": {
+      ".read": "auth !== null",
+      ".write": "auth !== null",
+      ".indexOn": ["count"],
+      "tagName": {
+				".read": "auth !== null",
+        ".write": "auth !== null",
+        "count": {
+          ".write": "auth !== null",
+        },
+        "items":{
+          "$contentID": {
+            ".read": "auth !== null",
+            ".write": "auth !== null",
+          }
+        }
+      }
+    },
+    "search": {
+       "request": {
+          "$recid": {
+             // I can only read records assigned to me
+             ".read": "auth.id === data.child('id').val() || auth.uid === data.child('id').val()",
+             // I can only write new records that don't exist yet
+             ".write": "!data.exists() && (newData.child('id').val() === auth.id || newData.child('id').val() === auth.uid)",
+             // ".validate": "newData.hasChildren(['index', 'type']) && (newData.hasChild('q') || newData.hasChild('query') || newData.hasChild('body'))",
+             // "index": {
+             //    // accepts arrays or strings
+             //    ".validate": "(newData.isString() && newData.val().length < 1000) || newData.hasChildren()",
+             //    "$child": {
+             //       ".validate": "newData.isString() && newData.val().length < 1000"
+             //    }
+             // },
+             // "type": {
+             //    // accepts arrays or strings
+             //    ".validate": "(newData.isString() && newData.val().length < 1000) || newData.hasChildren()",
+             //    "$child": {
+             //       ".validate": "newData.isString() && newData.val().length < 1000"
+             //    }
+             // },
+             // "query": {
+             //    // lucene formatted string, such as "title:search_term" or a `body` attribute
+             //    // see https://www.elastic.co/guide/en/elasticsearch/guide/current/query-dsl-intro.html
+             //    ".validate": "newData.isString() || newData.hasChildren()"
+             // },
+             // "body": {
+             //    // The `body` object of an ES search, such as { size: 25, from: 0, query: "*foo*" }, see
+             //    // https://www.elastic.co/guide/en/elasticsearch/guide/current/query-dsl-intro.html
+             //    ".validate": "newData.hasChildren()"
+             // },
+             // "q": {
+             //    // lucene formatted 'lite' search string, such as "*foo*" or "+name:(mary john) +date:>2014-09-10", see
+             //    // https://www.elastic.co/guide/en/elasticsearch/guide/current/search-lite.html
+             //    ".validate": "newData.isString()"
+             // },
+             // "size": {
+             //    ".validate": "newData.isNumber() && newData.val() >= 0"
+             // },
+             // "from": {
+             //   ".validate": "newData.isNumber() && newData.val() >= 0"
+             // },
+          }
+       },
+       "response": {
+         ".indexOn": "timestamp",
+          "$recid": {
+            // I can only read/write records assigned to me
+            ".read": "auth.id === data.child('id').val() || auth.uid === data.child('id').val()",
+            // delete only
+            ".write": "auth.id === data.child('id').val() || auth.uid === data.child('id').val() && !newData.exists()"
+          }
+       }
+    },
+    "reports": {
+      ".write": "auth !== null",
+      "$reportID":{
+
+      }
+    }
+  }
+}

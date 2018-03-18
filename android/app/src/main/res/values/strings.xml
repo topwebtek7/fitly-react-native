@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Fitly</string>
+    <!-- Good andro: <string name="fb_app_id">1344886765590233</string> -->
+    <string name="fb_app_id">1760749287520077</string>
+    <!-- <string name="fb_login_protocol_scheme">fb1344886765590233</string> -->
+    <string name="fb_login_protocol_scheme">fb1760749287520077</string>
+</resources>
